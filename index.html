@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitcoin Daily Price Movement</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #020617;
+      padding: 24px 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      width: 340px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .price {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 12px 0;
+    }
+    .change {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .positive {
+      color: #22c55e;
+    }
+    .negative {
+      color: #ef4444;
+    }
+    .updated {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Bitcoin Today</h1>
+    <div id="price" class="price">Loading...</div>
+    <div id="change" class="change"></div>
+    <div id="updated" class="updated"></div>
+  </div>
+
+  <script>
+    async function fetchBitcoinData() {
+      try {
+        const response = await fetch(
+          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true'
+        );
+        const data = await response.json();
+
+        const price = data.bitcoin.usd;
+        const change = data.bitcoin.usd_24h_change;
+
+        const priceEl = document.getElementById('price');
+        const changeEl = document.getElementById('change');
+        const updatedEl = document.getElementById('updated');
+
+        priceEl.textContent = `$${price.toLocaleString()}`;
+
+        const sign = change >= 0 ? '+' : '';
+        changeEl.textContent = `${sign}${change.toFixed(2)}% (24h)`;
+        changeEl.className = 'change ' + (change >= 0 ? 'positive' : 'negative');
+
+        updatedEl.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+      } catch (error) {
+        document.getElementById('price').textContent = 'Error loading data';
+      }
+    }
+
+    fetchBitcoinData();
+    setInterval(fetchBitcoinData, 60000); // refresh every 60 seconds
+  </script>
+</body>
+</html>
