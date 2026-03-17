@@ -1,2 +1,2 @@
-f# bitcoin-dail
+ bitcoin-dail
 tracks bitcoin price daily
